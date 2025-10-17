@@ -1,0 +1,145 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html>
+<head>
+  <title>Unit Circle Animation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <style>
+    body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+<script>
+let angle = 0;
+let r = 100; // Radius of unit circle
+let t = 0;
+
+function setup() {
+  createCanvas(800, 600);
+  textAlign(CENTER, CENTER);
+  textSize(14);
+}
+
+function draw() {
+  background(255);
+  translate(200, 300); // Center unit circle
+  let x = r * cos(angle);
+  let y = r * sin(angle);
+
+  // Draw unit circle
+  stroke(0);
+  noFill();
+  ellipse(0, 0, 2 * r, 2 * r);
+  line(-r - 20, 0, r + 20, 0); // x-axis
+  line(0, -r - 20, 0, r + 20); // y-axis
+  text("1", r + 30, 0); // Label x-axis
+  text("1", 0, -r - 30); // Label y-axis
+
+  // Draw rotating point and radius
+  stroke(0);
+  fill(0);
+  line(0, 0, x, y);
+  ellipse(x, y, 8, 8);
+  text("P(cos θ, sin θ)", x + 30, y - 10);
+
+  // Draw cosine and sine projections
+  stroke(255, 0, 0); // Red for cosine
+  line(x, y, x, 0);
+  line(x, 0, 0, 0);
+  text("cos θ", x / 2, 10);
+
+  stroke(0, 0, 255); // Blue for sine
+  line(x, y, 0, y);
+  line(0, y, 0, 0);
+  text("sin θ", -20, y / 2);
+
+  // Plot sine and cosine graphs on the right
+  push();
+  translate(300, 0); // Move to graph area
+  stroke(0);
+  line(0, -r, 0, r); // y-axis
+  line(0, 0, 200, 0); // x-axis
+  text("θ", 210, 0);
+  text("1", 0, -r - 10);
+  text("-1", 0, r + 15);
+
+  // Plot cosine (red)
+  stroke(255, 0, 0);
+  noFill();
+  beginShape();
+  for (let i = 0; i <= t; i += 0.01) {
+    vertex(i * 50, -r * cos(i));
+  }
+  endShape();
+
+  // Plot sine (blue)
+  stroke(0, 0, 255);
+  beginShape();
+  for (let i = 0; i <= t; i += 0.01) {
+    vertex(i * 50, -r * sin(i));
+  }
+  endShape();
+
+  // Plot moving points on graphs
+  fill(255, 0, 0);
+  ellipse(t * 50, -r * cos(t), 5, 5);
+  fill(0, 0, 255);
+  ellipse(t * 50, -r * sin(t), 5, 5);
+  pop();
+
+  // Display cos²(θ) + sin²(θ) = 1
+  push();
+  translate(-150, -200);
+  fill(0);
+  text("cos²(θ) + sin²(θ) = 1", 0, 0);
+  let sum = cos(t) * cos(t) + sin(t) * sin(t);
+  text(`cos²(θ) + sin²(θ) = ${nf(cos(t) * cos(t), 1, 2)} + ${nf(sin(t) * sin(t), 1, 2)} = ${nf(sum, 1, 2)}`, 0, 30);
+  pop();
+
+  // Update angle
+  angle += 0.02;
+  t += 0.02;
+  if (t > 4 * PI) t = 0; // Reset after two cycles
+}
+</script>
+</body>
+</html>

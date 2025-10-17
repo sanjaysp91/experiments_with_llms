@@ -1,0 +1,1 @@
+Graphical visualization of the unit circle, the functions sine and cosine and why cos²(x) + sin²(x) = 1. Create an animation. 
