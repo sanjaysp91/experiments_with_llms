@@ -22,7 +22,10 @@ Python 3.13.3    # output on my terminal
 ```bash
 langchain % python3 -m pip install jupyterlab    # install jupyterlab python package 
 langchain % pip freeze | grep 'jupyterlab==' >> requirements.txt    # manually add a specific package to the requirements file 
+langchain % python3 -m pip install python-dotenv    # install dotenv python package 
+langchain % pip freeze | grep 'python-dotenv==' >> requirements.txt 
 langchain % cat requirements.txt    # check the file contents 
+
 ```
 ### Install using requirements.txt
 ```bash
@@ -76,12 +79,13 @@ graph LR
 
 ### Configuration
 Important config files or env vars.
-- <tbd>
-- <tbd>
+* File for **loading environmental variables**: ./langchain/.env
+    * .env file contains environmental variables. 
+    * If .env file is found, variables are loaded overriding any in the current shell. Else variables already in current shell are used. 
 
 ## Contributing
 Small note on how to contribute.
-- Fork → branch → PR
+* Fork → branch → PR
 
 ## Contact
 Author — Sanjay Patel 
