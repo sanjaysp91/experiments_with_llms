@@ -82,6 +82,7 @@ Important config files or env vars.
 * File for **loading environmental variables**: ./langchain/.env
     * .env file contains environmental variables. 
     * If .env file is found, variables are loaded overriding any in the current shell. Else variables already in current shell are used. 
+    * **Important Note**: Don't commit or share your .env file as it contains your secret api keys. Since this is a public repo, I have used dummy example.env from the langchain tutorial with some modifications. You can rename this file as .env and use. Remember to add .env to .gitignore file before committing your code. 
 
 ## Contributing
 Small note on how to contribute.
